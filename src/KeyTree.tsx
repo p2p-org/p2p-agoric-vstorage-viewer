@@ -23,21 +23,33 @@ export function KeyTree({ path, node }: Props) {
   return (
     <div style={{ paddingLeft: 20 }}>
       {data.children.length === 0 && <div>Children not found</div>}
-      {data.children.map((k: string) => (
-        <div key={k} className={s.item}>
-          <div>
-            <span className={s.path}>{k}</span>
-            <button type="button" title="Load children keys" onClick={() => toggleOpenKey(k)}>
-              {openKeys.includes(k) ? '↑' : '↓'}
-            </button>
-            <button type="button" title="Load data" onClick={() => toggleDataKey(k)}>
-              d
-            </button>
+      {data.children.map((k: string) => {
+        const toggleKey = () => toggleOpenKey(k);
+        const toggleData = () => toggleDataKey(k);
+        const toggleAll = () => {
+          toggleKey();
+          toggleData();
+        };
+
+        return (
+          <div key={k} className={s.item}>
+            <div>
+              <span className={s.path}>{k}</span>
+              <button type="button" title="Load children keys" onClick={toggleKey}>
+                {openKeys.includes(k) ? '↑' : '↓'}
+              </button>
+              <button type="button" title="Load data" onClick={toggleData}>
+                d
+              </button>
+              <button type="button" title="Load data" onClick={toggleAll}>
+                a
+              </button>
+            </div>
+            {openKeys.includes(k) && <KeyTree node={node} path={path ? `${path}.${k}` : k} />}
+            {dataKeys.includes(k) && <DataViewer node={node} path={path ? `${path}.${k}` : k} />}
           </div>
-          {openKeys.includes(k) && <KeyTree node={node} path={path ? `${path}.${k}` : k} />}
-          {dataKeys.includes(k) && <DataViewer node={node} path={path ? `${path}.${k}` : k} />}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
