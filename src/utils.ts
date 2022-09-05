@@ -13,7 +13,7 @@ export const useStorageQuery = (node: string, path: string) =>
       }),
     })
       .then((res) => res.json())
-      .then((d) => JSON.parse(atob(d.result.response.value))),
+      .then((d) => d.result.response.value && JSON.parse(atob(d.result.response.value))),
   );
 
 export const useToggleKeys = (): [string[], (k: string) => void] => {

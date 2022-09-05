@@ -10,16 +10,20 @@ export function DataViewer({ node, path }: Props) {
   const { isLoading, error, data } = useStorageQuery(node, `data/${path}`);
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>error: {error.toString()}</div>;
+    return <div>Error: {error.toString()}</div>;
   }
 
   // you can analyze an object in dev tools
   // eslint-disable-next-line no-console
-  console.log(data);
+  console.log('data', data);
+
+  if (!data) {
+    return <div>Data not found</div>;
+  }
 
   try {
     const value = JSON.parse(data.value);

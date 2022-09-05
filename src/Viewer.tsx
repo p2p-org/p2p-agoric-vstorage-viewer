@@ -13,11 +13,11 @@ export function Viewer({ path, node }: Props) {
   const { isLoading, error, data } = useStorageQuery(node, `children/${path}`);
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>error: {error.toString()}</div>;
+    return <div>Error: {error.toString()}</div>;
   }
 
   return (
