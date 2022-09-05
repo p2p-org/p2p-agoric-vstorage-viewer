@@ -19,5 +19,9 @@ export function DataViewer({ node, path }: Props) {
 
   const value = JSON.parse(data.value);
 
+  if (typeof value === 'string' || typeof value === 'number') {
+    return <div>{value}</div>;
+  }
+
   return <ReactJson src={value} />;
 }

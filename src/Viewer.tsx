@@ -1,5 +1,6 @@
 import { useStorageQuery, useToggleKeys } from './utils';
 import { DataViewer } from './DataViewer';
+import * as s from './Viewer.module.css';
 
 type Props = {
   node: string;
@@ -23,9 +24,9 @@ export function Viewer({ path, node }: Props) {
     <div style={{ paddingLeft: 20 }}>
       {data.children.length === 0 && <div>Children not found</div>}
       {data.children.map((k: string) => (
-        <div key={k}>
+        <div key={k} className={s.item}>
           <div>
-            {k}
+            <span className={s.path}>{k}</span>
             <button type="button" title="Load children keys" onClick={() => toggleOpenKey(k)}>
               {openKeys.includes(k) ? '↑' : '↓'}
             </button>
