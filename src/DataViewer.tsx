@@ -1,4 +1,4 @@
-import ReactJson from 'react-json-view'
+import ReactJson from 'react-json-view';
 import { useStorageQuery } from './utils';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export function DataViewer({ node, path }: Props) {
-  const { isLoading, error, data } = useStorageQuery(node, `data/${  path}`);
+  const { isLoading, error, data } = useStorageQuery(node, `data/${path}`);
 
   if (isLoading) {
     return <div>loading...</div>;
@@ -17,7 +17,8 @@ export function DataViewer({ node, path }: Props) {
     return <div>error: {error.toString()}</div>;
   }
 
-  // eslint-ignore-next-line no-console
+  // you can analyze an object in dev tools
+  // eslint-disable-next-line no-console
   console.log(data);
 
   try {
@@ -27,8 +28,25 @@ export function DataViewer({ node, path }: Props) {
       return <div>{value}</div>;
     }
 
-    return <ReactJson src={value} />;
+    let bodyJson: any;
+
+    if (value.body) {
+      try {
+        const body = JSON.parse(value.body);
+        bodyJson = <ReactJson src={body} name="body" />;
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      }
+    }
+
+    return (
+      <>
+        <ReactJson src={value} name="data" />
+        {bodyJson}
+      </>
+    );
   } catch (err) {
-    return <div>Failed to parse: {data.value}</div>
+    return <div>Failed to parse: {data.value}</div>;
   }
 }

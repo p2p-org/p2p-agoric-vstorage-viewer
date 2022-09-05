@@ -1,4 +1,4 @@
-### Agoric vstorage viewer
+# Agoric vstorage viewer
 
 Start a dev server:
 ```

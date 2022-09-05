@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Viewer } from './Viewer';
 import { useLocalStorage } from './utils';
 import * as s from './App.module.css';
-console.log(s);
 
 const queryClient = new QueryClient();
 const DEFAULT_NODE = 'https://xnet.rpc.agoric.net';
