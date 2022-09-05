@@ -5,7 +5,7 @@ import { useLocalStorage } from './utils';
 import * as s from './App.module.css';
 
 const queryClient = new QueryClient();
-const DEFAULT_NODE = 'https://xnet.rpc.agoric.net';
+const DEFAULT_NODE = 'http://localhost:26657';
 
 function App() {
   const [node, setNode] = useLocalStorage('agoricnode', DEFAULT_NODE);
