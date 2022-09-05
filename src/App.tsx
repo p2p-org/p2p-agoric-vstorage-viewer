@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Viewer } from './Viewer';
+import { KeyTree } from './KeyTree';
 import { useLocalStorage } from './utils';
 import * as s from './App.module.css';
 
@@ -25,7 +25,7 @@ function App() {
           <button type="submit">Save</button>
         </div>
       </form>
-      <Viewer path="" node={node} key={node} />
+      <KeyTree path="" node={node} key={node} />
     </QueryClientProvider>
   );
 }

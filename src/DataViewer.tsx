@@ -1,5 +1,5 @@
-import ReactJson from 'react-json-view';
-import { useStorageQuery } from './utils';
+import { ValueViewer } from './ValueViewer';
+import { useAbciQuery } from './utils';
 
 type Props = {
   node: string;
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export function DataViewer({ node, path }: Props) {
-  const { isLoading, error, data } = useStorageQuery(node, `data/${path}`);
+  const { isLoading, error, data } = useAbciQuery(node, `/custom/vstorage/data/${path}`);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -17,37 +17,19 @@ export function DataViewer({ node, path }: Props) {
     return <div>Error: {error.toString()}</div>;
   }
 
-  // you can analyze an object in dev tools
-  // eslint-disable-next-line no-console
-  console.log('data', data);
-
   if (!data) {
     return <div>Data not found</div>;
   }
 
   try {
-    const value = JSON.parse(data.value);
-
-    if (typeof value === 'string' || typeof value === 'number') {
-      return <div>{value}</div>;
-    }
-
-    let bodyJson: any;
-
-    if (value.body) {
-      try {
-        const body = JSON.parse(value.body);
-        bodyJson = <ReactJson src={body} name="body" />;
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
-    }
+    const { blockHeight, values } = JSON.parse(data.value);
 
     return (
       <>
-        <ReactJson src={value} name="data" />
-        {bodyJson}
+        <div>Height: {blockHeight}</div>
+        {values.map((v: string, index: number) => (
+          <ValueViewer raw={v} key={v} index={index} />
+        ))}
       </>
     );
   } catch (err) {

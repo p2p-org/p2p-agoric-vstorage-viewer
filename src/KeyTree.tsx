@@ -1,16 +1,16 @@
-import { useStorageQuery, useToggleKeys } from './utils';
+import { useAbciQuery, useToggleKeys } from './utils';
 import { DataViewer } from './DataViewer';
-import * as s from './Viewer.module.css';
+import * as s from './KeyTree.module.css';
 
 type Props = {
   node: string;
   path: string;
 };
 
-export function Viewer({ path, node }: Props) {
+export function KeyTree({ path, node }: Props) {
   const [openKeys, toggleOpenKey] = useToggleKeys();
   const [dataKeys, toggleDataKey] = useToggleKeys();
-  const { isLoading, error, data } = useStorageQuery(node, `children/${path}`);
+  const { isLoading, error, data } = useAbciQuery(node, `/custom/vstorage/children/${path}`);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -34,7 +34,7 @@ export function Viewer({ path, node }: Props) {
               d
             </button>
           </div>
-          {openKeys.includes(k) && <Viewer node={node} path={path ? `${path}.${k}` : k} />}
+          {openKeys.includes(k) && <KeyTree node={node} path={path ? `${path}.${k}` : k} />}
           {dataKeys.includes(k) && <DataViewer node={node} path={path ? `${path}.${k}` : k} />}
         </div>
       ))}
