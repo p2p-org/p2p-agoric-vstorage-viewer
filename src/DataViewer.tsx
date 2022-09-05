@@ -17,11 +17,18 @@ export function DataViewer({ node, path }: Props) {
     return <div>error: {error.toString()}</div>;
   }
 
-  const value = JSON.parse(data.value);
+  // eslint-ignore-next-line no-console
+  console.log(data);
 
-  if (typeof value === 'string' || typeof value === 'number') {
-    return <div>{value}</div>;
+  try {
+    const value = JSON.parse(data.value);
+
+    if (typeof value === 'string' || typeof value === 'number') {
+      return <div>{value}</div>;
+    }
+
+    return <ReactJson src={value} />;
+  } catch (err) {
+    return <div>Failed to parse: {data.value}</div>
   }
-
-  return <ReactJson src={value} />;
 }
