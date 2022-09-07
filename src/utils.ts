@@ -1,15 +1,15 @@
 import { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 
-export const useAbciQuery = (node: string, path: string) =>
-  useQuery(path, () => {
+export const useAbciQuery = (node: string, path: string, height?: number) =>
+  useQuery(`${path}:${height}`, () => {
     const options = {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
         id: 1,
         method: 'abci_query',
-        params: { path },
+        params: { path, height: height && height.toString() }, // height must be a string (bigint)
       }),
     };
 

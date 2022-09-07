@@ -1,0 +1,7 @@
+.values {
+  display: flex;
+}
+
+.value {
+  width: 300px;
+}
