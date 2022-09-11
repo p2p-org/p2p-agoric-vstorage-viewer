@@ -11,12 +11,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@storeon/localstorage": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-json-view": "^1.21.3",
-    "react-query": "^3.39.2"
+    "react-query": "^3.39.2",
+    "storeon": "^3.1.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
