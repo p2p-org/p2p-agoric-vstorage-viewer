@@ -6,14 +6,13 @@ import { useAbciQuery } from './utils';
 import * as s from './DataViewer.module.css';
 
 type Props = {
-  node: string;
   path: string;
 };
 
-export function DataViewer({ node, path }: Props) {
+export function DataViewer({ path }: Props) {
   const [heights, setHeights] = useState<number[]>([]);
   const [currentHeight, setCurrentHeight] = useState<number | undefined>();
-  const { isLoading, error, data } = useAbciQuery(node, `/custom/vstorage/data/${path}`, currentHeight);
+  const { isLoading, error, data } = useAbciQuery(`/custom/vstorage/data/${path}`, currentHeight);
 
   if (isLoading) {
     return <div>Loading...</div>;
