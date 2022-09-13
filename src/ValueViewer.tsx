@@ -14,7 +14,7 @@ const foldAmountObject = (obj: any) => {
         // can do this because we get `obj` from JSON.parse
         // eslint-disable-next-line no-param-reassign
         obj[key] = `${obj[key].value.digits} ${obj[key].brand.iface.replace('Alleged: ', '')}`;
-      } else {
+      } else if (typeof obj[key] === 'object') {
         foldAmountObject(obj[key]);
       }
     }
