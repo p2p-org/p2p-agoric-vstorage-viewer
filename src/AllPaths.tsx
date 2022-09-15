@@ -26,12 +26,14 @@ const loadAllPaths = async (node: string, rootPath: string) => {
 };
 
 function OnePath({ value }: { value: string }) {
-  const [showData, toggleData] = useReducer(s => !s, false);
+  const [showData, toggleData] = useReducer((ss) => !ss, false);
 
   return (
     <div className={s.path}>
-      {value}
-      {' '}<button type="button" title="Toggle data" onClick={toggleData}>d</button>
+      {value}{' '}
+      <button type="button" title="Toggle data" onClick={toggleData}>
+        d
+      </button>
       {showData && <DataViewer path={value} />}
     </div>
   );
@@ -58,9 +60,7 @@ export function AllPaths() {
           Load
         </button>
       )}
-      {data && data.map((path) => (
-        <OnePath key={path} value={path} />
-      ))}
+      {data && data.map((path) => <OnePath key={path} value={path} />)}
     </div>
   );
 }
