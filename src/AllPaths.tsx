@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useReducer } from 'react';
 import { useQuery } from 'react-query';
+import { DataViewer } from './DataViewer';
 import * as s from './AllPaths.module.css';
 import { abciQuery, useNode } from './utils';
 
@@ -24,6 +25,18 @@ const loadAllPaths = async (node: string, rootPath: string) => {
   return allPaths;
 };
 
+function OnePath({ value }: { value: string }) {
+  const [showData, toggleData] = useReducer(s => !s, false);
+
+  return (
+    <div className={s.path}>
+      {value}
+      {' '}<button type="button" title="Toggle data" onClick={toggleData}>d</button>
+      {showData && <DataViewer path={value} />}
+    </div>
+  );
+}
+
 export function AllPaths() {
   const node = useNode();
   const [enabled, setEnabled] = useState(false);
@@ -46,7 +59,7 @@ export function AllPaths() {
         </button>
       )}
       {data && data.map((path) => (
-        <div key={path}>{path}</div>
+        <OnePath key={path} value={path} />
       ))}
     </div>
   );
