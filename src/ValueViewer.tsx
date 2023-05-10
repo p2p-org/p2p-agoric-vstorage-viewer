@@ -1,4 +1,6 @@
 import ReactJson from 'react-json-view';
+import { makeMarshal } from '@endo/marshal';
+import { Far } from '@endo/far';
 import { useStore } from './store';
 import * as s from './ValueViewer.module.css';
 
@@ -7,33 +9,38 @@ type Props = {
   index: number;
 };
 
-const foldAmountObject = (obj: any) => {
-  Object.keys(obj).forEach((key) => {
-    if (obj[key]) {
-      if (obj[key].brand && obj[key].value) {
-        // can do this because we get `obj` from JSON.parse
-        // eslint-disable-next-line no-param-reassign
-        obj[key] = `${obj[key].value.digits} ${(obj[key].brand.iface || '???').replace('Alleged: ', '')}`;
-      } else if (typeof obj[key] === 'object') {
-        foldAmountObject(obj[key]);
-      }
-    }
-  });
+const convertSlotToVal = (slot, iface) => Far(iface, {
+  getIface: () => iface ? iface.replace('Alleged: ', '') : '???',
+});
+const { unserialize } = makeMarshal(undefined, convertSlotToVal);
+
+const convert = val => {
+  if (typeof val !== 'object' || val === null) {
+    return val;
+  }
+  if (val.brand && val.value) {
+    // convert to string. val.value is a bigint, val.brand is a Far
+    return `${val.value} ${val.brand.getIface()}`;
+  } else {
+    const newVal = {};
+    Object.keys(val).forEach(key => {
+      newVal[key] = convert(val[key]);
+    });
+    return newVal;
+  }
 };
 
 export function ValueViewer({ raw, index }: Props) {
   const { foldAmountObject: fao } = useStore('foldAmountObject');
 
-  const value = JSON.parse(raw);
-  const body = JSON.parse(value.body.replace(/^#{/, '{'));
-
+  let value = unserialize(JSON.parse(raw));
   if (fao) {
-    foldAmountObject(body);
+    value = convert(value);
   }
 
   return (
     <div className={s.root}>
-      <ReactJson src={body} name={`value${index}`} />
+      <ReactJson src={value} name={`value${index}`} />
     </div>
   );
 }
