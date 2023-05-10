@@ -32,7 +32,7 @@ const convert = (val: any) => {
   }
 
   const newVal: any = {};
-  Object.keys(val).forEach(key => {
+  Object.keys(val).forEach((key) => {
     newVal[key] = convert(val[key]);
   });
 

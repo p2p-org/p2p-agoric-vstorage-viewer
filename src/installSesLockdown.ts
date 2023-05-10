@@ -1,6 +1,6 @@
 /* global lockdown */
 import 'ses'; // adds lockdown, harden, and Compartment
-import '@endo/eventual-send/shim.js'; // adds support needed by E
+import '@endo/eventual-send/shim'; // adds support needed by E
 
 const consoleTaming = import.meta.env.DEV ? 'unsafe' : 'safe';
 
@@ -10,4 +10,5 @@ lockdown({
   consoleTaming,
 });
 
+// @ts-ignore
 Error.stackTraceLimit = Infinity;
