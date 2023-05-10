@@ -10,12 +10,14 @@ type Props = {
 const foldAmountObject = (obj: any) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key]) {
-      if (obj[key].brand && obj[key].value) {
+      const o = obj[key];
+
+      if (o.brand && o.value && o.value.digits) {
         // can do this because we get `obj` from JSON.parse
         // eslint-disable-next-line no-param-reassign
-        obj[key] = `${obj[key].value.digits} ${(obj[key].brand.iface || '???').replace('Alleged: ', '')}`;
-      } else if (typeof obj[key] === 'object') {
-        foldAmountObject(obj[key]);
+        obj[key] = `${o.value.digits} ${(o.brand.iface || '???').replace('Alleged: ', '')}`;
+      } else if (typeof o === 'object') {
+        foldAmountObject(o);
       }
     }
   });
