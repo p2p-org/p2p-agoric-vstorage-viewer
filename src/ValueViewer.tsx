@@ -25,7 +25,7 @@ export function ValueViewer({ raw, index }: Props) {
   const { foldAmountObject: fao } = useStore('foldAmountObject');
 
   const value = JSON.parse(raw);
-  const body = JSON.parse(value.body);
+  const body = JSON.parse(value.body.replace(/^#{/, '{'));
 
   if (fao) {
     foldAmountObject(body);
