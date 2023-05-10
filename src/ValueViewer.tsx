@@ -9,25 +9,34 @@ type Props = {
   index: number;
 };
 
-const convertSlotToVal = (slot, iface) => Far(iface, {
-  getIface: () => iface ? iface.replace('Alleged: ', '') : '???',
-});
+const convertSlotToVal = (slot: any, iface?: string) => {
+  if (!iface) {
+    return '???';
+  }
+
+  return Far(iface, {
+    getIface: () => iface.replace('Alleged: ', ''),
+  });
+};
+
 const { unserialize } = makeMarshal(undefined, convertSlotToVal);
 
-const convert = val => {
+const convert = (val: any) => {
   if (typeof val !== 'object' || val === null) {
     return val;
   }
+
   if (val.brand && val.value) {
     // convert to string. val.value is a bigint, val.brand is a Far
     return `${val.value} ${val.brand.getIface()}`;
-  } else {
-    const newVal = {};
-    Object.keys(val).forEach(key => {
-      newVal[key] = convert(val[key]);
-    });
-    return newVal;
   }
+
+  const newVal: any = {};
+  Object.keys(val).forEach(key => {
+    newVal[key] = convert(val[key]);
+  });
+
+  return newVal;
 };
 
 export function ValueViewer({ raw, index }: Props) {
@@ -37,6 +46,10 @@ export function ValueViewer({ raw, index }: Props) {
   if (fao) {
     value = convert(value);
   }
+
+  // avoid problems with JSON.parse inside react-json-view:
+  // Do not know how to serialize a BigInt
+  value = JSON.parse(JSON.stringify(value, (key, v) => (typeof v === 'bigint' ? v.toString() : v)));
 
   return (
     <div className={s.root}>
