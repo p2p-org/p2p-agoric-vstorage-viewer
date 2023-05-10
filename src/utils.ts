@@ -23,7 +23,7 @@ export const useNode = () => useStore('node').node;
 export const useAbciQuery = (path: string, height?: number) => {
   const node = useNode();
 
-  return useQuery(`${path}:${height}`, () => abciQuery(node, path, height));
+  return useQuery(`${node}:${path}:${height}`, () => abciQuery(node, path, height));
 };
 
 export const useToggleKeys = (): [string[], (k: string) => void] => {
