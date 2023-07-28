@@ -1,15 +1,19 @@
-import { useAbciQuery, useToggleKeys } from './utils';
+import { useAbciQuery, useToggleKeys, useTrackKeys } from './utils';
 import { DataViewer } from './DataViewer';
 import * as s from './KeyTree.module.css';
 
 type Props = {
   path: string;
+  defaultOpenKeys: { [path: string]: string[] };
+  defaultDataKeys: { [path: string]: string[] };
 };
 
-export function KeyTree({ path }: Props) {
-  const [openKeys, toggleOpenKey] = useToggleKeys();
-  const [dataKeys, toggleDataKey] = useToggleKeys();
+export function KeyTree({ path, defaultOpenKeys, defaultDataKeys }: Props) {
+  const [openKeys, toggleOpenKey] = useToggleKeys(defaultOpenKeys[path]);
+  const [dataKeys, toggleDataKey] = useToggleKeys(defaultDataKeys[path]);
   const { isLoading, error, data } = useAbciQuery(`/custom/vstorage/children/${path}`);
+
+  useTrackKeys(path, openKeys, dataKeys);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -44,7 +48,13 @@ export function KeyTree({ path }: Props) {
                 a
               </button>
             </div>
-            {openKeys.includes(k) && <KeyTree path={path ? `${path}.${k}` : k} />}
+            {openKeys.includes(k) && (
+              <KeyTree
+                path={path ? `${path}.${k}` : k}
+                defaultOpenKeys={defaultOpenKeys}
+                defaultDataKeys={defaultDataKeys}
+              />
+            )}
             {dataKeys.includes(k) && <DataViewer path={path ? `${path}.${k}` : k} />}
           </div>
         );

@@ -2,9 +2,13 @@ import { useState, FormEvent } from 'react';
 import { useStore } from './store';
 import * as s from './Settings.module.css';
 
-export function Settings() {
+type Props = {
+  newNode: string;
+};
+
+export function Settings({ newNode }: Props) {
   const { node, foldAmountObject, dispatch } = useStore('node', 'foldAmountObject');
-  const [currentNode, setCurrentNode] = useState(node);
+  const [currentNode, setCurrentNode] = useState(newNode || node);
 
   const saveNode = (e: FormEvent) => {
     e.preventDefault();
