@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useStore } from './store';
 
@@ -26,8 +26,8 @@ export const useAbciQuery = (path: string, height?: number) => {
   return useQuery(`${node}:${path}:${height}`, () => abciQuery(node, path, height));
 };
 
-export const useToggleKeys = (): [string[], (k: string) => void] => {
-  const [keys, setKeys] = useState<string[]>([]);
+export const useToggleKeys = (defaultValues?: string[]): [string[], (k: string) => void] => {
+  const [keys, setKeys] = useState<string[]>(defaultValues || []);
 
   const toggle = useCallback((key: string) => {
     setKeys((ks) => {
@@ -39,4 +39,51 @@ export const useToggleKeys = (): [string[], (k: string) => void] => {
   }, []);
 
   return [keys, toggle];
+};
+
+type HashState = {
+  // node
+  n: string;
+  // open keys
+  o: { [key: string]: string[] };
+  // data
+  d: { [key: string]: string[] };
+};
+
+export const getDefaultHashState = () => {
+  const currentHash = atob(window.location.hash.substr(1));
+
+  if (currentHash) {
+    return JSON.parse(currentHash) as HashState;
+  }
+
+  return {
+    n: '',
+    o: {},
+    d: {},
+  };
+};
+
+export const useTrackKeys = (path: string, openKeys: string[], dataKeys: string[]) => {
+  const data = getDefaultHashState();
+
+  data.n = useNode();
+
+  if (openKeys.length > 0) {
+    data.o = { ...data.o, [path]: openKeys };
+  } else {
+    delete data.o[path];
+  }
+
+  if (dataKeys.length > 0) {
+    data.d = { ...data.d, [path]: dataKeys };
+  } else {
+    delete data.d[path];
+  }
+
+  const newLocation = btoa(JSON.stringify(data));
+
+  if (newLocation !== window.location.hash.substr(1)) {
+    window.location.hash = newLocation;
+  }
 };
