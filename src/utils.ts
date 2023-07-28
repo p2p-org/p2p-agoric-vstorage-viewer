@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useStore } from './store';
 
@@ -108,6 +108,9 @@ export const getDefaultHashState = () => {
   };
 };
 
+// TODO: fix this hack
+let skipNextHashUpdate = false;
+
 export const useTrackKeys = (path: string, openKeys: string[], dataKeys: string[]) => {
   const data = getDefaultHashState();
 
@@ -129,5 +132,26 @@ export const useTrackKeys = (path: string, openKeys: string[], dataKeys: string[
 
   if (newLocation !== window.location.hash.substr(1)) {
     window.location.hash = newLocation;
+    skipNextHashUpdate = true;
   }
+};
+
+export const useDefaultHashState = (): [HashState, string] => {
+  const [defaultState, setDefaultState] = useState(getDefaultHashState());
+
+  useEffect(() => {
+    const fn = () => {
+      if (skipNextHashUpdate) {
+        skipNextHashUpdate = false
+      } else {
+        setDefaultState(getDefaultHashState());
+      }
+    };
+
+    window.addEventListener('hashchange', fn);
+
+    return () => window.removeEventListener('hashchange', fn);
+  }, []);
+
+  return [defaultState, encodeHashState(defaultState)];
 };
