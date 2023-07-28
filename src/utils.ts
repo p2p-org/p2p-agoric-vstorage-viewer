@@ -50,11 +50,55 @@ type HashState = {
   d: { [key: string]: string[] };
 };
 
+export const encodeHashState = (data: HashState): string => {
+  const oParts = Object.entries(data.o).flatMap(([key, values]) =>
+    values.map((value) => (key ? `${key}.${value}` : value)),
+  );
+
+  const dParts = Object.entries(data.d).flatMap(([key, values]) => values.map((value) => `${key}.${value}`));
+
+  return `${data.n}|${oParts.join(',')}|${dParts.join(',')}`;
+};
+
+export const decodeHashState = (v: string): HashState => {
+  const parts = v.split('|');
+  const n = parts[0];
+
+  const oParts = parts[1].split(',').filter(Boolean);
+  const o: { [key: string]: string[] } = oParts.reduce((acc: { [key: string]: string[] }, part) => {
+    const lastDotIndex = part.lastIndexOf('.');
+    if (lastDotIndex !== -1) {
+      const key = part.substring(0, lastDotIndex);
+      const value = part.substring(lastDotIndex + 1);
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(value);
+    } else {
+      if (!acc['']) acc[''] = [];
+      acc[''].push(part);
+    }
+    return acc;
+  }, {});
+
+  const dParts = parts[2].split(',').filter(Boolean);
+  const d: { [key: string]: string[] } = dParts.reduce((acc: { [key: string]: string[] }, part) => {
+    const lastDotIndex = part.lastIndexOf('.');
+    if (lastDotIndex !== -1) {
+      const key = part.substring(0, lastDotIndex);
+      const value = part.substring(lastDotIndex + 1);
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(value);
+    }
+    return acc;
+  }, {});
+
+  return { n, o, d };
+};
+
 export const getDefaultHashState = () => {
-  const currentHash = atob(window.location.hash.substr(1));
+  const currentHash = window.location.hash.substr(1);
 
   if (currentHash) {
-    return JSON.parse(currentHash) as HashState;
+    return decodeHashState(currentHash) as HashState;
   }
 
   return {
@@ -81,7 +125,7 @@ export const useTrackKeys = (path: string, openKeys: string[], dataKeys: string[
     delete data.d[path];
   }
 
-  const newLocation = btoa(JSON.stringify(data));
+  const newLocation = encodeHashState(data);
 
   if (newLocation !== window.location.hash.substr(1)) {
     window.location.hash = newLocation;
