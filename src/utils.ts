@@ -95,7 +95,7 @@ export const decodeHashState = (v: string): HashState => {
 };
 
 export const getDefaultHashState = () => {
-  const currentHash = window.location.hash.substr(1);
+  const currentHash = decodeURIComponent(window.location.hash.substr(1));
 
   if (currentHash) {
     return decodeHashState(currentHash) as HashState;
