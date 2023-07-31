@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { useStore } from './store';
 import * as s from './Settings.module.css';
 
@@ -9,6 +9,12 @@ type Props = {
 export function Settings({ newNode }: Props) {
   const { node, foldAmountObject, dispatch } = useStore('node', 'foldAmountObject');
   const [currentNode, setCurrentNode] = useState(newNode || node);
+
+  useEffect(() => {
+    if (newNode) {
+      dispatch('setNode', newNode);
+    }
+  }, [node, newNode, dispatch]);
 
   const saveNode = (e: FormEvent) => {
     e.preventDefault();
