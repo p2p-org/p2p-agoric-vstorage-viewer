@@ -6,6 +6,14 @@ type Props = {
   newNode: string;
 };
 
+const knownNodes = [
+  'https://main.rpc.agoric.net',
+  'https://devnet.rpc.agoric.net',
+  'https://ollinet.rpc.agoric.net',
+  'https://emerynet.rpc.agoric.net',
+  'http://localhost:26657',
+];
+
 export function Settings({ newNode }: Props) {
   const { node, foldAmountObject, dispatch } = useStore('node', 'foldAmountObject');
   const [currentNode, setCurrentNode] = useState(newNode || node);
@@ -29,6 +37,12 @@ export function Settings({ newNode }: Props) {
       <div>
         <input value={currentNode} onChange={(e) => setCurrentNode(e.target.value)} className={s.nodeInput} />
         <button type="submit">Save</button>
+
+        {knownNodes.map((n) => (
+          <button type="button" key={n} style={{ marginLeft: 10 }} onClick={() => dispatch('setNode', n)}>
+            {n.replace(/^https?:\/\//g, '').replace('.rpc.agoric.net', '')}
+          </button>
+        ))}
       </div>
       <div>
         <label htmlFor="toggleFoldAmountObject">

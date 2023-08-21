@@ -142,7 +142,7 @@ export const useDefaultHashState = (): [HashState, string] => {
   useEffect(() => {
     const fn = () => {
       if (skipNextHashUpdate) {
-        skipNextHashUpdate = false
+        skipNextHashUpdate = false;
       } else {
         setDefaultState(getDefaultHashState());
       }
