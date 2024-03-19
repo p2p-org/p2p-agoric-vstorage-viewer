@@ -2,7 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useStore } from './store';
 
-export const abciQuery = (node: string, path: string, height?: number) => {
+let useLegacyApi = false;
+
+export const legacyAbciQuery = (node: string, path: string, height?: number) => {
   const options = {
     method: 'POST',
     body: JSON.stringify({
@@ -16,6 +18,30 @@ export const abciQuery = (node: string, path: string, height?: number) => {
   return fetch(node, options)
     .then((res) => res.json())
     .then((d) => d.result.response.value && JSON.parse(atob(d.result.response.value)));
+};
+
+export const apiQuery = (node: string, path: string, height?: number) => {
+  const normalizedPath = path.replace(/^\/custom/, '/agoric');
+  const url = `${node}${normalizedPath}`;
+
+  return fetch(url).then((res) => {
+    // probably gave the old rpc url
+    // https://github.com/Agoric/agoric-sdk/issues/9096
+    if (res.status === 404) {
+      useLegacyApi = true;
+      return legacyAbciQuery(node, path, height);
+    }
+
+    return res.json();
+  });
+};
+
+export const abciQuery = (node: string, path: string, height?: number) => {
+  if (useLegacyApi) {
+    return legacyAbciQuery(node, path, height);
+  }
+
+  return apiQuery(node, path, height);
 };
 
 export const useNode = () => useStore('node').node;
@@ -142,7 +168,7 @@ export const useDefaultHashState = (): [HashState, string] => {
   useEffect(() => {
     const fn = () => {
       if (skipNextHashUpdate) {
-        skipNextHashUpdate = false
+        skipNextHashUpdate = false;
       } else {
         setDefaultState(getDefaultHashState());
       }

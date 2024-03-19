@@ -23,7 +23,7 @@ export function DataViewer({ path }: Props) {
   }
 
   try {
-    const { blockHeight, values } = data ? JSON.parse(data.value) : { blockHeight: currentHeight, values: [] };
+    const { blockHeight, values } = data?.value ? JSON.parse(data.value) : { blockHeight: currentHeight, values: [] };
 
     const showPrev = () => {
       setHeights((items) => [...items, blockHeight]);
