@@ -24,7 +24,15 @@ export const apiQuery = (node: string, path: string, height?: number) => {
   const normalizedPath = path.replace(/^\/custom/, '/agoric');
   const url = `${node}${normalizedPath}`;
 
-  return fetch(url).then((res) => {
+  const options: RequestInit = {};
+
+  if (height) {
+    options.headers = {
+      'X-Cosmos-Block-Height': height.toString(),
+    };
+  }
+
+  return fetch(url, options).then((res) => {
     // probably gave the old rpc url
     // https://github.com/Agoric/agoric-sdk/issues/9096
     if (res.status === 404) {
